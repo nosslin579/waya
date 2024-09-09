@@ -1,5 +1,5 @@
 package waya.model;
 
 public enum Fruit {
-  PEACH, CHERRY
+  PEACH, CHERRY, PEAR
 }

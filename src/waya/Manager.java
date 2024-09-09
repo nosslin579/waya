@@ -22,26 +22,35 @@ public class Manager {
     return stands;
   }
 
-  private static Stand findCheapest(List<Stand> stands) {
+  private static Stand findCheapest(List<Stand> stands, Fruit notBuyingThisFruit) {
     return stands.stream()
-        .min(Manager::compareCheapest)
+        .min((stand1, stand2) -> compareCheapest(stand1, stand2, notBuyingThisFruit))
         .get();
   }
 
-  private static int compareCheapest(Stand stand1, Stand stand2) {
+  private static int compareCheapest(Stand stand1, Stand stand2, Fruit notBuyingThisFruit) {
     int sum1 = stand1.getFruitBaskets().stream()
+        .filter(basket -> basket.getFruit() != notBuyingThisFruit)
         .mapToInt(Basket::getPrice)
         .sum();
     int sum2 = stand2.getFruitBaskets().stream()
+        .filter(basket -> basket.getFruit() != notBuyingThisFruit)
         .mapToInt(Basket::getPrice)
         .sum();
     return sum1 - sum2;
   }
 
-
   public static void main(String[] args) {
     List<Stand> stands = generateStands();
-    Stand cheapest = findCheapest(stands);
-    System.out.println(cheapest);
+    Fruit notBuyingThisFruit = Math.random() < 0.5d ? Fruit.PEACH : Fruit.CHERRY;
+    Stand cheapest = findCheapest(stands, notBuyingThisFruit);
+
+    int sum = cheapest.getFruitBaskets()
+        .stream()
+        .filter(basket -> basket.getFruit() != notBuyingThisFruit)
+        .mapToInt(Basket::getPrice)
+        .sum();
+
+    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum );
   }
 }
