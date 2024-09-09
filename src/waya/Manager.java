@@ -13,11 +13,13 @@ public class Manager {
 
   public static List<Stand> generateStands() {
     List<Stand> stands = new ArrayList<>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
       List<Basket> baskets = new ArrayList<>();
       for (Fruit fruit : Fruit.values()) {
-        int price = (int) (Math.random() * 100);
-        baskets.add(new Basket(fruit, price));
+        if (Math.random() > 0.5d) {
+          int price = (int) (Math.random() * 100);
+          baskets.add(new Basket(fruit, price));
+        }
       }
       stands.add(new Stand(i, baskets));
     }
@@ -26,8 +28,21 @@ public class Manager {
 
   private static Stand findCheapest(List<Stand> stands, Fruit notBuyingThisFruit) {
     return stands.stream()
+        .filter(stand -> filterToHave(stand, notBuyingThisFruit))
         .min((stand1, stand2) -> compareCheapest(stand1, stand2, notBuyingThisFruit))
         .get();
+  }
+
+  private static boolean filterToHave(Stand stand, Fruit excluding) {
+    for (Fruit fruit : Fruit.values()) {
+      if (excluding == fruit) {
+        continue;
+      }
+      if (stand.getFruitBaskets().stream().noneMatch(basket -> basket.getFruit() == fruit)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static int compareCheapest(Stand stand1, Stand stand2, Fruit notBuyingThisFruit) {
@@ -58,6 +73,10 @@ public class Manager {
         .map(Enum::name)
         .collect(Collectors.joining(","));
 
-    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum + " Fruits: " + boughtFruits);
+    long availableStands = stands.stream()
+        .filter(stand -> filterToHave(stand, notBuyingThisFruit))
+        .count();
+
+    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum + " Fruits: " + boughtFruits + " Available stands: " + availableStands);
   }
 }
