@@ -5,7 +5,9 @@ import waya.model.Fruit;
 import waya.model.Stand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Manager {
 
@@ -51,6 +53,11 @@ public class Manager {
         .mapToInt(Basket::getPrice)
         .sum();
 
-    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum );
+    String boughtFruits = Arrays.stream(Fruit.values())
+        .filter(fruit -> fruit != notBuyingThisFruit)
+        .map(Enum::name)
+        .collect(Collectors.joining(","));
+
+    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum + " Fruits: " + boughtFruits);
   }
 }
