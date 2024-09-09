@@ -57,8 +57,7 @@ public class Manager {
     return sum1 - sum2;
   }
 
-  public static void main(String[] args) {
-    List<Stand> stands = generateStands();
+  private static Stand buyFor(String name, List<Stand> stands) {
     Fruit notBuyingThisFruit = Math.random() < 0.5d ? Fruit.PEACH : Fruit.CHERRY;
     Stand cheapest = findCheapest(stands, notBuyingThisFruit);
 
@@ -77,6 +76,15 @@ public class Manager {
         .filter(stand -> filterToHave(stand, notBuyingThisFruit))
         .count();
 
-    System.out.println("Stand: " + cheapest.getId() + " Price: " + sum + " Fruits: " + boughtFruits + " Available stands: " + availableStands);
+    System.out.println(name +"> Stand: " + cheapest.getId() + " Price: " + sum + " Fruits: " + boughtFruits + " Available stands: " + availableStands);
+    return cheapest;
+  }
+
+  public static void main(String[] args) {
+    List<Stand> stands = generateStands();
+
+    Stand stand = buyFor("KajsaAndPelle", stands);
+    stands.remove(stand);
+    buyFor("Kompis       ", stands);
   }
 }
